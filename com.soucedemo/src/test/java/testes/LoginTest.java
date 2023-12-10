@@ -25,8 +25,8 @@ public class LoginTest {
             System.out.println("Navigated to Home page");
         }
     }
-    @Test(priority = 1 )
-    public void testLoginSource() {
+    @Test
+    public void testLoginSource() throws InterruptedException {
 
         // Abrir o navegador
         navegador.get("https://www.saucedemo.com");
@@ -35,11 +35,11 @@ public class LoginTest {
         //Localizando elementos e inserindo texto de entrada
         navegador.findElement(By.id("user-name")).sendKeys("standard_user");
         navegador.findElement(By.id("password")).sendKeys("secret_sauce");
-        navegador.findElement(By.name("submit")).click();
-        navegador.close();
+        navegador.findElement(By.name("login-button")).click();
+        
 
         // Verificar se o login foi bem-sucedido
-        WebElement productsLabel = navegador.findElement(By.className("form_group"));
+        WebElement productsLabel = navegador.findElement(By.className("title"));
         if (!productsLabel.getText().equals("Products")) {
             // Se o login não foi bem-sucedido, verificar criticidade e registrar um bug
             verificarCriticidadeERegistrarBug("Bug de Implementação", "Login bem-sucedido não redirecionou para a página correta", "High");
@@ -51,17 +51,27 @@ public class LoginTest {
 
 
     //Fluxo Principal - Teste de Login mal-Sucedido,Credenciais Incorretas
-    @Test(priority = 2)
+    @Test()
     public void NoLogin(){
 
         testLoginSource("usuario_incorreto", "senha_incorreta");
 
     }
-    @Test(priority = 3)
-    public void WhiteLogin(){
+    private void testLoginSource(String usuarioIncorreto, String senhaIncorreta) {
+        if(usuarioIncorreto != "standard_user") {
+            System.out.println("Usuario incorreto");
+
+            if (senhaIncorreta != "secret_sauce") {
+                System.out.println("Senha incorreta");
+            }
+        }
+    }
+
+    @Test()
+    public void WhiteLogin() throws InterruptedException{
         WebElement errorLabel = navegador.findElement(By.cssSelector("[data-test='error']"));
         if(!errorLabel.getText().isEmpty()) {
-            testLoginSource("");
+            testLoginSource();
 
         }
     }
@@ -89,7 +99,7 @@ public class LoginTest {
 
         // Chamar a API do Jira para criar um bug
         try {
-            criarBugNoJira(tipo, descricao, criticidade);
+          //  criarBugNoJira(tipo, descricao, criticidade);
         } catch (Exception e) {
             e.printStackTrace();
         }
